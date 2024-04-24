@@ -1,30 +1,92 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import Button from "./components/button.vue";
+import {ref} from "vue";
+
+const getPreference = () => {
+  const hasDarkPreference = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+  ).matches;
+  if (hasDarkPreference) {
+    return "dark-theme";
+  } else {
+    return "light-theme";
+  }
+}
+
+const userTheme = ref(localStorage.getItem('user-theme') || getPreference());
+document.documentElement.className = userTheme.value;
+
+const setTheme = (theme: string) => {
+  localStorage.setItem("user-theme", theme);
+  userTheme.value = theme
+  document.documentElement.className = theme;
+}
+
+const toggleTheme = () => {
+  const activeTheme = localStorage.getItem("user-theme");
+  if (activeTheme === "light-theme") {
+    setTheme("dark-theme");
+  } else {
+    setTheme("light-theme");
+  }
+}
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <router-view v-slot="{Component}">
+    <component :is="Component" :key="$route.path" ref="history"/>
+    <div class="button">
+      <Button @click="toggleTheme" :userTheme="userTheme"/>
+    </div>
+  </router-view>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.slide-fade-enter-active, .slide-fade-leave-active {
+  transition: opacity 0.5s ease;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  opacity: 0;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.button {
+  display: grid;
+  grid-template-columns: repeat(3, min-content);
+  justify-content: center;
+  align-items: flex-end;
+  gap: 8px;
+  bottom: 48px;
+  right: 24px;
+  position: absolute;
+
+  &:last-of-type {
+    justify-self: end;
+  }
+
+  .fav {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    transition: 0.3s all ease;
+    stroke: #646cff;
+
+    &:hover {
+      stroke: #535bf2;
+    }
+  }
+
+  .history {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    transition: 0.3s all ease;
+    stroke: #646cff;
+
+    &:hover {
+      stroke: #535bf2;
+    }
+  }
 }
 </style>
