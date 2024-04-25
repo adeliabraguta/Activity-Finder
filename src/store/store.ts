@@ -23,6 +23,11 @@ interface HistoryState {
     isHistoryVisible: boolean
 }
 
+interface FavState {
+    isFavVisible: boolean,
+    favs: Activity[]
+}
+
 export const useActivitiesStore = defineStore("Activities", {
     state: (): State => {
         return {
@@ -87,3 +92,33 @@ export const useHistoryStore = defineStore('History',{
         },
     }
 })
+
+export const useFavStore = defineStore('Favorite',{
+    state: (): FavState => {
+        return {
+            isFavVisible: false,
+            favs: JSON.parse(localStorage.getItem('favs') || '[]')
+        }
+    },
+    actions: {
+        showActivity() {
+            this.isFavVisible = true
+        },
+        hideActivity() {
+            this.isFavVisible = false
+        },
+        toggleFav(activity: Activity) {
+            const index = this.favs.findIndex(fav => fav.key === activity.key);
+            if (index === -1) {
+                this.favs.push(activity);
+            } else {
+                this.favs.splice(index, 1);
+            }
+            this.updateLocalStorage();
+        },
+        updateLocalStorage() {
+            localStorage.setItem('favs', JSON.stringify(this.favs));
+        }
+    }
+})
+
