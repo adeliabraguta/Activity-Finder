@@ -2,12 +2,24 @@
 import {computed} from "vue";
 import Loader from "./loader.vue";
 import {useActivitiesStore} from "../store/store.ts";
+import Range from "./Range.vue";
 
 const store = useActivitiesStore()
 
 
 const activity = computed(() => {
   return store.activity
+})
+
+const range: number = 10
+const filledAccessibilityRange = computed(() => {
+  const filledRange = range - (activity.value?.accessibility ?? 0) * range;
+  return Array.from({length: filledRange}, (_, index) => index);
+})
+
+const unfilledAccessibilityRange = computed(() => {
+  const unfilledRange = range - filledAccessibilityRange.value.length;
+  return Array.from({length: unfilledRange}, (_, index) => index);
 })
 
 </script>
@@ -45,7 +57,8 @@ const activity = computed(() => {
           </div>
           <div class="activity_detail">
             <span>Accessibility: </span>
-            <p>{{activity?.accessibility}}</p>
+            <Range :filled="filledAccessibilityRange"
+                   :unfilled="unfilledAccessibilityRange"/>
           </div>
           <div v-if="activity?.link" class="activity_detail"><span>Link: </span>
             <a :href=activity?.link>{{ activity?.link }}</a>
@@ -113,9 +126,11 @@ p {
     stroke: #535bf2;
   }
 }
-.fav_filled{
+
+.fav_filled {
   stroke: #646cff;
   fill: #646cff;
+
   &:hover {
     stroke: #535bf2;
     fill: #535bf2;
