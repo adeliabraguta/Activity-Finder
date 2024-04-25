@@ -47,7 +47,7 @@ export const useActivitiesStore = defineStore("Activities", {
             type && searchParams.append('type', type)
             price && searchParams.append('price', price)
             try {
-                const response = await fetch(`http://www.boredapi.com/api/activity?${searchParams.toString()}`)
+                const response = await fetch(`https://www.boredapi.com/api/activity?${searchParams.toString()}`)
                 const data = await response.json()
                 this.isSuccess = !data.error;
                 this.activity = data
@@ -64,7 +64,7 @@ export const useActivitiesStore = defineStore("Activities", {
         },
         async getRandomActivity(){
             try {
-                const response = await fetch(`http://www.boredapi.com/api/activity`)
+                const response = await fetch(`https://www.boredapi.com/api/activity`)
                 const data = await response.json()
                 this.isSuccess = !data.error;
                 this.activity = data

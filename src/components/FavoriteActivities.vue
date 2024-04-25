@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {Activity, useActivitiesStore, useFavStore} from "../store/store";
 import {computed} from "vue";
+import TrashIcon from "./icons/TrashIcon.vue";
 
 const favStore = useFavStore()
 const store = useActivitiesStore()
@@ -28,11 +29,8 @@ const handleClick = (activity: Activity) => {
             <RouterLink to="/activity" v-on:click="handleClick(activity)">{{ activity?.activity }}
             </RouterLink>
             <div @click="favStore.toggleFav(activity)">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                   class="feather feather-trash icon"><polyline points="3 6 5 6 21 6"></polyline><path
-                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            </div>
+              <TrashIcon/>
+              </div>
           </div>
         </div>
       </div>
@@ -78,17 +76,4 @@ const handleClick = (activity: Activity) => {
   justify-content: space-between;
   align-items: flex-end;
 }
-.icon {
-  cursor: pointer;
-  height: 24px;
-  width: 24px;
-  stroke: #d0d0d0;
-  transition: 0.3s all ease;
-
-  &:hover {
-    stroke: #535bf2;
-  }
-}
-
-
 </style>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 defineProps({
   filled: {
-    type: Array,
+    type: Array as () => Array<string | number>,
     required: true
   },
   unfilled: {
-    type: Array ,
+    type: Array as () => Array<string | number>,
     required: true
   }
 })

@@ -4,6 +4,8 @@ import {ref} from "vue";
 import ActivitiesHistory from "./components/ActivitiesHistory.vue";
 import {useFavStore, useHistoryStore} from "./store/store.ts";
 import FavoriteActivities from "./components/FavoriteActivities.vue";
+import FavIcon from "./components/icons/FavIcon.vue";
+import HistoryIcon from "./components/icons/HistoryIcon.vue";
 
 const historyStore = useHistoryStore()
 const favStore = useFavStore()
@@ -53,22 +55,8 @@ const toggleTheme = () => {
       <ActivitiesHistory v-if="historyStore.isHistoryVisible"/>
     </transition>
     <div class="button">
-      <span v-on:click="favStore.showActivity" class="navigation_text"><svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart fav">
-            <path
-                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg></span>
-      <span v-on:click="historyStore.showHistory" class="navigation_text"><svg xmlns="http://www.w3.org/2000/svg"
-                                                                               viewBox="0 0 24 24" fill="none"
-                                                                               stroke="currentColor" stroke-width="2"
-                                                                               stroke-linecap="round"
-                                                                               stroke-linejoin="round"
-                                                                               class="feather feather-clock history"><circle
-          cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+      <span v-on:click="favStore.showActivity" class="navigation_text"><FavIcon/></span>
+      <span v-on:click="historyStore.showHistory" class="navigation_text"><HistoryIcon/></span>
       <Button @click="toggleTheme" :userTheme="userTheme"/>
     </div>
   </router-view>
@@ -96,30 +84,6 @@ const toggleTheme = () => {
 
   &:last-of-type {
     justify-self: end;
-  }
-
-  .fav {
-    cursor: pointer;
-    height: 32px;
-    width: 32px;
-    transition: 0.3s all ease;
-    stroke: #646cff;
-
-    &:hover {
-      stroke: #535bf2;
-    }
-  }
-
-  .history {
-    cursor: pointer;
-    height: 32px;
-    width: 32px;
-    transition: 0.3s all ease;
-    stroke: #646cff;
-
-    &:hover {
-      stroke: #535bf2;
-    }
   }
 }
 </style>

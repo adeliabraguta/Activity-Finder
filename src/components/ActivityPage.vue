@@ -3,6 +3,7 @@ import {computed} from "vue";
 import Loader from "./loader.vue";
 import {useActivitiesStore, useFavStore} from "../store/store.ts";
 import Range from "./Range.vue";
+import ToggleFavIcon from "./icons/ToggleFavIcon.vue";
 
 const store = useActivitiesStore()
 const favStore = useFavStore()
@@ -23,7 +24,9 @@ const unfilledAccessibilityRange = computed(() => {
 })
 
 const toggleFavorite = () => {
-  favStore.toggleFav(activity.value)
+  if (activity.value) {
+    favStore.toggleFav(activity.value)
+  }
 }
 
 </script>
@@ -76,19 +79,12 @@ const toggleFavorite = () => {
           </div>
         </div>
         <div @click="toggleFavorite">
-          <svg :class="{fav_filled :favStore.favs.includes(activity)}" xmlns="http://www.w3.org/2000/svg"
-               viewBox="0 0 24 24"
-               fill="none"
-               stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart fav">
-            <path
-                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
+          <ToggleFavIcon/>
         </div>
       </div>
     </div>
     <div class="navigation navigation_activity_page">
-      <RouterLink to="/">< Back to Main Page</RouterLink>
+      <RouterLink to="/activityfinder/">< Back to Main Page</RouterLink>
     </div>
   </div>
 </template>
@@ -150,5 +146,6 @@ p {
     fill: #535bf2;
   }
 }
+
 
 </style>

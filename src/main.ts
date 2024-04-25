@@ -8,8 +8,8 @@ import ActivityPage from "./components/ActivityPage.vue";
 
 const pinia = createPinia()
 const routes = [
-    {path: '/', name: 'MainPage', component: MainPage},
-    {path: '/activity', name: 'activity', component: ActivityPage}
+    {path: '/activityfinder/', name: 'MainPage', component: MainPage},
+    {path: '/activityfinder/activity', name: 'activity', component: ActivityPage}
 
 ]
 const router = createRouter({

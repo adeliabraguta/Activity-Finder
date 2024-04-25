@@ -4,7 +4,7 @@ import {computed, ref} from "vue";
 import {useRouter} from "vue-router";
 import {ActivityTypes} from "./activityTypes";
 import Loader from "./loader.vue";
-import Error from "./Error.vue";
+import ErrorPopup from "./ErrorPopup.vue";
 
 const router = useRouter()
 const participants = ref<string>('')
@@ -41,7 +41,7 @@ const getRandomActivity = async () => {
     }, 3000)
   }
   if (store.isSuccess) {
-    await router.push('/activity')
+    await router.push('/activityfinder/activity')
     participants.value = ''
     activity.value = ''
     price.value = ''
@@ -57,11 +57,9 @@ const getMoreParticipants = computed(() => {
 <template>
   <div class="page_wrapper">
     <Transition name="slide-fade">
-      <Error
-          :show="showErrorPopup"
-          :message="errorMessage"
-          @close="showErrorPopup = false"
-      ></Error>
+      <ErrorPopup :show="showErrorPopup"
+                  :message="errorMessage"
+                  @close="showErrorPopup = false"/>
     </Transition>
     <div class="container">
       <img class="img" src="../assets/cover.svg" alt="activity img"/>
