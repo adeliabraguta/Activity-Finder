@@ -4,6 +4,7 @@ import {computed, ref} from "vue";
 import {useRouter} from "vue-router";
 import {ActivityTypes} from "./activityTypes";
 import Loader from "./loader.vue";
+import Error from "./Error.vue";
 
 const router = useRouter()
 const participants = ref<string>('')
@@ -55,6 +56,13 @@ const getMoreParticipants = computed(() => {
 
 <template>
   <div class="page_wrapper">
+    <Transition name="slide-fade">
+      <Error
+          :show="showErrorPopup"
+          :message="errorMessage"
+          @close="showErrorPopup = false"
+      ></Error>
+    </Transition>
     <div class="container">
       <img class="img" src="../assets/cover.svg" alt="activity img"/>
       <h2>Find an activity</h2>

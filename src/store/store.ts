@@ -19,6 +19,10 @@ export interface Activity {
     error?: any
 }
 
+interface HistoryState {
+    isHistoryVisible: boolean
+}
+
 export const useActivitiesStore = defineStore("Activities", {
     state: (): State => {
         return {
@@ -50,6 +54,9 @@ export const useActivitiesStore = defineStore("Activities", {
                 this.isLoading = false
             }
         },
+        setActivity(activity: Activity) {
+            this.activity = activity
+        },
         async getRandomActivity(){
             try {
                 const response = await fetch(`http://www.boredapi.com/api/activity`)
@@ -62,5 +69,21 @@ export const useActivitiesStore = defineStore("Activities", {
                 this.isLoading = false
             }
         }
+    }
+})
+
+export const useHistoryStore = defineStore('History',{
+    state: (): HistoryState => {
+        return {
+            isHistoryVisible: false
+        }
+    },
+    actions: {
+        showHistory() {
+            this.isHistoryVisible = true
+        },
+        hideHistory() {
+            this.isHistoryVisible = false
+        },
     }
 })

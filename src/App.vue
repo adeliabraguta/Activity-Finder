@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import Button from "./components/button.vue";
 import {ref} from "vue";
+import ActivitiesHistory from "./components/ActivitiesHistory.vue";
+import {useHistoryStore} from "./store/store.ts";
+
+const historyStore = useHistoryStore()
+
+const handler = () => {
+  historyStore.hideHistory();
+};
 
 const getPreference = () => {
   const hasDarkPreference = window.matchMedia(
@@ -34,8 +42,18 @@ const toggleTheme = () => {
 
 <template>
   <router-view v-slot="{Component}">
-    <component :is="Component" :key="$route.path" ref="history"/>
+    <component :is="Component" :key="$route.path" ref="history" @mousedown="handler"/>
+    <Transition name="slide-fade">
+      <ActivitiesHistory v-if="historyStore.isHistoryVisible"/>
+    </transition>
     <div class="button">
+      <span v-on:click="historyStore.showHistory" class="navigation_text"><svg xmlns="http://www.w3.org/2000/svg"
+                                                                               viewBox="0 0 24 24" fill="none"
+                                                                               stroke="currentColor" stroke-width="2"
+                                                                               stroke-linecap="round"
+                                                                               stroke-linejoin="round"
+                                                                               class="feather feather-clock history"><circle
+          cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
       <Button @click="toggleTheme" :userTheme="userTheme"/>
     </div>
   </router-view>
