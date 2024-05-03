@@ -84,7 +84,7 @@ const toggleFavorite = () => {
       </div>
     </div>
     <div class="navigation navigation_activity_page">
-      <RouterLink to="/activityfinder/">< Back to Main Page</RouterLink>
+      <RouterLink to="/">< Back to Main Page</RouterLink>
     </div>
   </div>
 </template>

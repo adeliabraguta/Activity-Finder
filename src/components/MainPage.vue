@@ -24,7 +24,7 @@ const getActivity = async () => {
     }, 3000)
   }
   if (store.isSuccess) {
-    await router.push('/activityfinder/activity')
+    await router.push('/activity')
     participants.value = ''
     activity.value = ''
     price.value = ''
@@ -41,7 +41,7 @@ const getRandomActivity = async () => {
     }, 3000)
   }
   if (store.isSuccess) {
-    await router.push('/activityfinder/activity')
+    await router.push('/activity')
     participants.value = ''
     activity.value = ''
     price.value = ''

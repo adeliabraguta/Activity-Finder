@@ -8,12 +8,13 @@ import ActivityPage from "./components/ActivityPage.vue";
 
 const pinia = createPinia()
 const routes = [
-    {path: '/activityfinder/', name: 'MainPage', component: MainPage},
-    {path: '/activityfinder/activity', name: 'activity', component: ActivityPage}
+    {path: '/', name: 'MainPage', component: MainPage},
+    {path: '/activity', name: 'activity', component: ActivityPage}
 
 ]
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/activityfinder/'),
     routes
 })
+
 createApp(App).use(router).use(pinia).mount('#app')
