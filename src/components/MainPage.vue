@@ -1,52 +1,85 @@
 <script setup lang="ts">
-import {useActivitiesStore} from "../store/store";
-import {computed, ref} from "vue";
+import {Activity, useActivitiesStore} from "../store/store";
+import {computed, ref, watch} from "vue";
 import {useRouter} from "vue-router";
 import {ActivityTypes} from "./activityTypes";
 import Loader from "./loader.vue";
 import ErrorPopup from "./ErrorPopup.vue";
+import {useFetch} from "../store/useFetch.ts";
 
 const router = useRouter()
 const participants = ref<string>('')
-const activity = ref<string>('')
+const type = ref<string>('')
 const price = ref<string>('')
 const store = useActivitiesStore()
 const showErrorPopup = ref(false);
 const errorMessage = ref('');
 
-const getActivity = async () => {
-  await store.getActivity({participants: participants.value, type: activity.value, price: price.value})
-  if (!store.isSuccess) {
-    errorMessage.value = "No activity found for the specified parameters";
-    showErrorPopup.value = true;
-    setTimeout(() => {
-      showErrorPopup.value = false;
-    }, 3000)
-  }
-  if (store.isSuccess) {
-    await router.push('/activity')
-    participants.value = ''
-    activity.value = ''
-    price.value = ''
-  }
+const {
+  data,
+  error,
+  isLoading,
+  isSuccess, fetchData
+} = useFetch()
+
+const {
+  data: dataRandom,
+  error: errorRandom,
+  isSuccess: isSuccessRandom, fetchData: fetchRandomData
+} = useFetch()
+
+const getActivity = () => {
+  const searchParams = new URLSearchParams()
+  searchParams.append('participants', participants.value)
+  type.value && searchParams.append('type', type.value)
+  price.value && searchParams.append('price', price.value)
+  fetchData(`https://www.boredapi.com/api/activity?${searchParams.toString()}`)
 }
 
-const getRandomActivity = async () => {
-  await store.getRandomActivity()
-  if (!store.isSuccess) {
+watch(() => error.value, (newError) => {
+  if (newError) {
     errorMessage.value = "No activity found for the specified parameters";
-    showErrorPopup.value = true;
+    showErrorPopup.value = true
     setTimeout(() => {
-      showErrorPopup.value = false;
+      showErrorPopup.value = false
     }, 3000)
   }
-  if (store.isSuccess) {
-    await router.push('/activity')
+})
+
+watch(() => isSuccess.value, (newSuccess) => {
+  if (newSuccess) {
+    store.setActivity(data.value as Activity)
     participants.value = ''
-    activity.value = ''
+    type.value = ''
     price.value = ''
+    router.push('/activity')
   }
+})
+
+
+const getRandomActivity =  () => {
+  fetchRandomData('https://www.boredapi.com/api/activity')
 }
+
+watch(() => errorRandom.value, (newError) => {
+  if (newError) {
+    errorMessage.value = "No activity found for the specified parameters";
+    showErrorPopup.value = true
+    setTimeout(() => {
+      showErrorPopup.value = false
+    }, 3000)
+  }
+})
+
+watch(() => isSuccessRandom.value, (newSuccess) => {
+  if (newSuccess) {
+    store.setActivity(dataRandom.value as Activity)
+    participants.value = ''
+    type.value = ''
+    price.value = ''
+    router.push('/activity')
+  }
+})
 
 const getMoreParticipants = computed(() => {
   return Math.random() * (3) + 4;
@@ -77,7 +110,7 @@ const getMoreParticipants = computed(() => {
         </div>
         <div class="input_container">
           <label>Type of activity:</label>
-          <select v-model="activity">
+          <select v-model="type">
             <option value="" selected>Choose</option>
             <option v-for="type in ActivityTypes" :value=type>{{ type }}</option>
           </select>
@@ -96,11 +129,11 @@ const getMoreParticipants = computed(() => {
           </div>
         </div>
 
-        <div v-if="store.isLoading" class="loader">
+        <div v-if="isLoading" class="loader">
           <Loader/>
         </div>
         <div v-else>
-          <button type="submit" v-if="participants === '' && activity === ''" disabled>Search</button>
+          <button type="submit" v-if="participants === '' && type === ''" disabled>Search</button>
           <button type="submit" v-else>Search</button>
         </div>
       </form>
