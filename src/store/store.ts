@@ -1,12 +1,5 @@
 import {defineStore} from "pinia";
-
-interface State {
-    activity: Activity | null
-    activities: Activity[]
-    isLoading: boolean
-    isError: boolean
-    isSuccess: boolean
-}
+import {ref, Ref} from "vue";
 
 export interface Activity {
     activity: string
@@ -19,106 +12,46 @@ export interface Activity {
     error?: any
 }
 
-interface HistoryState {
-    isHistoryVisible: boolean
-}
+export const useActivitiesStore = defineStore("Activities", () => {
+    const activity: Ref<Activity | null> = ref(null)
+    const activities: Ref<object[]> = ref(JSON.parse(localStorage.getItem('activities') as string) || [])
 
-interface FavState {
-    isFavVisible: boolean,
-    favs: Activity[]
-}
-
-export const useActivitiesStore = defineStore("Activities", {
-    state: (): State => {
-        return {
-            activity: null,
-            activities: [],
-            isLoading: false,
-            isError: false,
-            isSuccess: false
-        }
-    },
-    actions: {
-        async getActivity({participants, type, price}: { participants: string, type: string, price: string }) {
-            this.isLoading = true
-            this.activity = null
-            const searchParams = new URLSearchParams()
-            searchParams.append('participants', participants)
-            type && searchParams.append('type', type)
-            price && searchParams.append('price', price)
-            try {
-                const response = await fetch(`https://www.boredapi.com/api/activity?${searchParams.toString()}`)
-                const data = await response.json()
-                this.isSuccess = !data.error;
-                this.activity = data
-                this.isSuccess && this.activities.unshift(data)
-                this.isLoading = false
-                this.isError = false
-            } catch (error) {
-                this.isError = true
-                this.isLoading = false
-            }
-        },
-        setActivity(activity: Activity) {
-            this.activity = activity
-        },
-        async getRandomActivity(){
-            try {
-                const response = await fetch(`https://www.boredapi.com/api/activity`)
-                const data = await response.json()
-                this.isSuccess = !data.error;
-                this.activity = data
-                this.activities.unshift(data)
-            } catch (error) {
-                this.isError = true
-                this.isLoading = false
-            }
-        }
+    const setActivity = (data: Activity) => {
+        activity.value = data
+        activities.value.unshift(activity.value)
+        updateLocalStorage()
     }
+    const updateActivity = (data: Activity) => activity.value = data
+
+    const updateLocalStorage = () => localStorage.setItem('activities', JSON.stringify(activities.value))
+
+
+    return {activity, activities, setActivity, updateActivity}
 })
 
-export const useHistoryStore = defineStore('History',{
-    state: (): HistoryState => {
-        return {
-            isHistoryVisible: false
-        }
-    },
-    actions: {
-        showHistory() {
-            this.isHistoryVisible = true
-        },
-        hideHistory() {
-            this.isHistoryVisible = false
-        },
-    }
+export const useHistoryStore = defineStore('History', () => {
+    const isHistoryVisible: Ref<boolean > = ref(false)
+    const showHistory = () => isHistoryVisible.value = true
+    const hideHistory = () => isHistoryVisible.value = false
+    return {showHistory, hideHistory, isHistoryVisible}
 })
 
-export const useFavStore = defineStore('Favorite',{
-    state: (): FavState => {
-        return {
-            isFavVisible: false,
-            favs: JSON.parse(localStorage.getItem('favs') || '[]')
+export const useFavStore = defineStore('Favorite', ()=>{
+    const isFavVisible: Ref<boolean > = ref(false)
+    const favs:Ref<Activity[]> = ref([])
+    const showActivity = () => isFavVisible.value = true
+    const hideActivity = () => isFavVisible.value = false
+    const toggleFav = (activity: Activity) => {
+        const index = favs.value.findIndex((fav:Activity) => fav.key === activity.key)
+        if (index === -1) {
+            favs.value.push(activity)
+        } else {
+            favs.value.splice(index, 1)
         }
-    },
-    actions: {
-        showActivity() {
-            this.isFavVisible = true
-        },
-        hideActivity() {
-            this.isFavVisible = false
-        },
-        toggleFav(activity: Activity) {
-            const index = this.favs.findIndex(fav => fav.key === activity.key);
-            if (index === -1) {
-                this.favs.push(activity);
-            } else {
-                this.favs.splice(index, 1);
-            }
-            this.updateLocalStorage();
-        },
-        updateLocalStorage() {
-            localStorage.setItem('favs', JSON.stringify(this.favs));
-        }
+        updateLocalStorage()
     }
+    const updateLocalStorage = () => localStorage.setItem('favs', JSON.stringify(favs.value))
+
+    return {showActivity, hideActivity, toggleFav, favs, isFavVisible }
 })
 
