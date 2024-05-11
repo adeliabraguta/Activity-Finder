@@ -11,7 +11,12 @@ export function useFetch() {
         isLoading.value = true
         isSuccess.value = false
         try {
-            const response = await fetch(url)
+            const response = await fetch(url, {
+                headers:{
+                    "Authorization": "Bearer " +
+                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzE1MjY2ODI2fQ.yE9uYUnShjYCpapwnL3lSnSquWM5OfqitDyN3ckUEeI"
+                }
+            })
             data.value = await response.json() as Activity | null
             error.value = null
             isSuccess.value = true

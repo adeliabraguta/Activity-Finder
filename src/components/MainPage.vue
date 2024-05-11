@@ -32,8 +32,7 @@ const getActivity = () => {
   const searchParams = new URLSearchParams()
   searchParams.append('participants', participants.value)
   type.value && searchParams.append('type', type.value)
-  price.value && searchParams.append('price', price.value)
-  fetchData(`https://www.boredapi.com/api/activity?${searchParams.toString()}`)
+  fetchData(`http://localhost:3000/api/activities?${searchParams.toString()}`)
 }
 
 watch(() => error.value, (newError) => {

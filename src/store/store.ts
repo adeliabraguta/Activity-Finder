@@ -23,7 +23,7 @@ export const useActivitiesStore = defineStore("Activities", () => {
     }
     const updateActivity = (data: Activity) => activity.value = data
 
-    const updateLocalStorage = () => localStorage.setItem('activities', JSON.stringify(activities));
+    const updateLocalStorage = () => localStorage.setItem('activities', JSON.stringify(activities.value));
 
 
     return {activity, activities, setActivity, updateActivity}
@@ -50,7 +50,7 @@ export const useFavStore = defineStore('Favorite', ()=>{
         }
         updateLocalStorage();
     }
-    const updateLocalStorage = () => localStorage.setItem('favs', JSON.stringify(favs));
+    const updateLocalStorage = () => localStorage.setItem('favs', JSON.stringify(favs.value));
 
     return {showActivity, hideActivity, toggleFav, favs, isFavVisible }
 })
