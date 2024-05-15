@@ -6,9 +6,11 @@ import {useFavStore, useHistoryStore} from "./store/store.ts";
 import FavoriteActivities from "./components/FavoriteActivities.vue";
 import FavIcon from "./components/icons/FavIcon.vue";
 import HistoryIcon from "./components/icons/HistoryIcon.vue";
+import {useRouter} from "vue-router";
 
 const historyStore = useHistoryStore()
 const favStore = useFavStore()
+const router = useRouter()
 
 const handler = () => {
   historyStore.hideHistory();
@@ -55,8 +57,10 @@ const toggleTheme = () => {
       <ActivitiesHistory v-if="historyStore.isHistoryVisible"/>
     </transition>
     <div class="button">
-      <span v-on:click="favStore.showActivity" class="navigation_text"><FavIcon/></span>
-      <span v-on:click="historyStore.showHistory" class="navigation_text"><HistoryIcon/></span>
+      <div class="button-states" v-show="router.currentRoute.value.name !== 'Login'">
+        <span v-on:click="favStore.showActivity" class="navigation_text"><FavIcon/></span>
+        <span v-on:click="historyStore.showHistory" class="navigation_text"><HistoryIcon/></span>
+      </div>
       <Button @click="toggleTheme" :userTheme="userTheme"/>
     </div>
   </router-view>
@@ -74,16 +78,17 @@ const toggleTheme = () => {
 
 .button {
   display: grid;
-  grid-template-columns: repeat(3, min-content);
+  grid-template-columns: repeat(2, min-content);
   justify-content: center;
   align-items: flex-end;
   gap: 8px;
-  bottom: 48px;
+  top: 48px;
   right: 24px;
   position: absolute;
+}
 
-  &:last-of-type {
-    justify-self: end;
-  }
+.button-states {
+  display: flex;
+  gap: 8px;
 }
 </style>

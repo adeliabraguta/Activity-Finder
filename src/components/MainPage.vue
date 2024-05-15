@@ -1,87 +1,46 @@
 <script setup lang="ts">
-import {Activity, useActivitiesStore} from "../store/store";
-import {computed, ref, watch} from "vue";
+import {ActivitiesResponse, Activity, useActivitiesStore} from "../store/store";
+import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
 import {ActivityTypes} from "./activityTypes";
-import Loader from "./loader.vue";
 import ErrorPopup from "./ErrorPopup.vue";
 import {useFetch} from "../store/useFetch.ts";
 
 const router = useRouter()
 const participants = ref<string>('')
 const type = ref<string>('')
-const price = ref<string>('')
 const store = useActivitiesStore()
 const showErrorPopup = ref(false);
 const errorMessage = ref('');
 
-const {
-  data,
-  error,
-  isLoading,
-  isSuccess, fetchData
-} = useFetch()
-
-const {
-  data: dataRandom,
-  error: errorRandom,
-  isSuccess: isSuccessRandom, fetchData: fetchRandomData
-} = useFetch()
+const {data, error, fetchData} = useFetch()
 
 const getActivity = () => {
   const searchParams = new URLSearchParams()
-  searchParams.append('participants', participants.value)
+  participants.value && searchParams.append('participants', participants.value)
   type.value && searchParams.append('type', type.value)
-  fetchData(`http://localhost:3000/api/activities?${searchParams.toString()}`)
+
+  fetchData({
+    url: `http://localhost:3000/activity?${searchParams.toString()}`
+    , method: 'GET'
+  })
 }
 
-watch(() => error.value, (newError) => {
-  if (newError) {
-    errorMessage.value = "No activity found for the specified parameters";
+watch(() => data.value, (newData) => {
+  if (error.value) {
+    errorMessage.value = error.value as string
     showErrorPopup.value = true
     setTimeout(() => {
       showErrorPopup.value = false
     }, 3000)
+    return
   }
-})
-
-watch(() => isSuccess.value, (newSuccess) => {
-  if (newSuccess) {
-    store.setActivity(data.value as Activity)
+  if (newData) {
+    data.value && store.setActivity(data.value as Activity)
     participants.value = ''
     type.value = ''
-    price.value = ''
     router.push('/activity')
   }
-})
-
-
-const getRandomActivity =  () => {
-  fetchRandomData('https://www.boredapi.com/api/activity')
-}
-
-watch(() => errorRandom.value, (newError) => {
-  if (newError) {
-    errorMessage.value = "No activity found for the specified parameters";
-    showErrorPopup.value = true
-    setTimeout(() => {
-      showErrorPopup.value = false
-    }, 3000)
-  }
-})
-
-watch(() => isSuccessRandom.value, (newSuccess) => {
-  if (newSuccess) {
-    store.setActivity(dataRandom.value as Activity)
-    participants.value = ''
-    type.value = ''
-    price.value = ''
-    router.push('/activity')
-  }
-})
-
-const getMoreParticipants = computed(() => {
-  return Math.random() * (3) + 4;
 })
 
 </script>
@@ -104,7 +63,7 @@ const getMoreParticipants = computed(() => {
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
-            <option :value="getMoreParticipants.toFixed()">4+</option>
+            <option value="4">4</option>
           </select>
         </div>
         <div class="input_container">
@@ -114,31 +73,13 @@ const getMoreParticipants = computed(() => {
             <option v-for="type in ActivityTypes" :value=type>{{ type }}</option>
           </select>
         </div>
-        <div class="input_container">
-          <label>Free activity? </label>
-          <div class="input_container_option">
-            <label>
-              <input v-model="price" value="0" type="radio" name="choice-radio">
-              Yes
-            </label>
-            <label>
-              <input v-model="price" value="" type="radio" name="choice-radio">
-              No
-            </label>
-          </div>
-        </div>
-
-        <div v-if="isLoading" class="loader">
-          <Loader/>
-        </div>
-        <div v-else>
-          <button type="submit" v-if="participants === '' && type === ''" disabled>Search</button>
-          <button type="submit" v-else>Search</button>
+        <div>
+          <button type="submit">Get a random activity</button>
         </div>
       </form>
       <h3>OR</h3>
       <div>
-        <button @click="getRandomActivity">Get a random activity</button>
+        <RouterLink to="/activities">Get all activities</RouterLink>
       </div>
     </div>
     <div class="navigation">
@@ -176,11 +117,5 @@ form {
 
 input[type='radio'] {
   accent-color: #535bf2;
-}
-
-.loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 </style>

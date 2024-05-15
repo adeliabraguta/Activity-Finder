@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import {useActivitiesStore, useFavStore} from "../../store/store.ts";
-import {computed} from "vue";
-
-const store = useActivitiesStore()
-const favStore = useFavStore()
-const activity = computed(() => {
-  return store.activity
+import {Activity, useFavStore} from "../../store/store.ts";
+import {PropType} from "vue";
+defineProps({
+  activity:{
+    type: Object as PropType<Activity>,
+    required: true
+  }
 })
+const favStore = useFavStore()
+
 </script>
 
 <template>
